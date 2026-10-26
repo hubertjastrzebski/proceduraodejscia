@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_UstalenieSciezki" name="Ustalenie ścieżki postępowania" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.10.0">
+  <decision id="UstalenieSciezki" name="Ustalenie ścieżki postępowania">
+    <description>Ustala ścieżkę postępowania po odnotowaniu odejścia na liście personelu.
+Sposób odejścia i kontekst, stopień stanowiska oraz stopień dostępu odpowiadają czynnikom ryzyka z ISO/IEC 27002:2022, pkt 5.18: kto kończy współpracę i dlaczego, jakie obowiązki ma odchodzący i jak cenne są zasoby, do których ma dostęp. Wiedza nawiązuje do pkt 6.5: obowiązki trwające po odejściu mogą dotyczyć m.in. poufności informacji i zdobytej wiedzy.
+Gdy odchodzący nie bierze udziału w procedurze (śmierć, nieobecność lub brak kooperacji), pozostałe dane wejściowe nie mają znaczenia. Wypowiedzenie przez firmę i przejście do konkurencji same nie zmieniają ścieżki. Razem z dostępem poufnym albo uprzywilejowanym kierują na ścieżkę podwyższonego ryzyka, a przejście do konkurencji razem z wiedzą poufną – na ścieżkę wysokiego ryzyka. Gdy pasuje kilka czynników, obowiązuje najsurowsza ścieżka.
+Reguły nie nakładają się na siebie (U): każde zestawienie wartości z list pasuje do dokładnie jednej reguły, więc kolejność reguł nie ma znaczenia.</description>
+    <informationRequirement id="InformationRequirement_SposobOdejscia">
+      <requiredInput href="#InputData_SposobOdejscia" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_Kontekst">
+      <requiredInput href="#InputData_Kontekst" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_StopienDostepu">
+      <requiredInput href="#InputData_StopienDostepu" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_StopienStanowiska">
+      <requiredInput href="#InputData_StopienStanowiska" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_Wiedza">
+      <requiredInput href="#InputData_Wiedza" />
+    </informationRequirement>
+    <authorityRequirement id="AuthorityRequirement_Iso27002">
+      <requiredAuthority href="#KnowledgeSource_Iso27002" />
+    </authorityRequirement>
+    <decisionTable id="DecisionTable_UstalenieSciezki" biodi:annotationsWidth="380">
+      <input id="Input_SposobOdejscia" label="Sposób odejścia" biodi:width="420">
+        <inputExpression id="InputExpression_SposobOdejscia" typeRef="string">
+          <text>Sposób odejścia</text>
+        </inputExpression>
+        <inputValues id="InputValues_SposobOdejscia">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej","rozwiązanie bez wypowiedzenia","śmierć","nagła nieobecność","nieobecność z nieznanej przyczyny","brak kooperacji"</text>
+        </inputValues>
+      </input>
+      <input id="Input_Kontekst" label="Kontekst" biodi:width="230">
+        <inputExpression id="InputExpression_Kontekst" typeRef="string">
+          <text>Kontekst</text>
+        </inputExpression>
+        <inputValues id="InputValues_Kontekst">
+          <text>"brak szczególnych okoliczności","przejście do konkurencji","spór z firmą","potwierdzone naruszenie zasad bezpieczeństwa informacji"</text>
+        </inputValues>
+      </input>
+      <input id="Input_StopienDostepu" label="Stopień dostępu" biodi:width="170">
+        <inputExpression id="InputExpression_StopienDostepu" typeRef="string">
+          <text>Stopień dostępu</text>
+        </inputExpression>
+        <inputValues id="InputValues_StopienDostepu">
+          <text>"podstawowy","poufny","uprzywilejowany"</text>
+        </inputValues>
+      </input>
+      <input id="Input_StopienStanowiska" label="Stopień stanowiska" biodi:width="170">
+        <inputExpression id="InputExpression_StopienStanowiska" typeRef="string">
+          <text>Stopień stanowiska</text>
+        </inputExpression>
+        <inputValues id="InputValues_StopienStanowiska">
+          <text>"wykonawcze","kierownicze","zarządcze"</text>
+        </inputValues>
+      </input>
+      <input id="Input_Wiedza" label="Wiedza" biodi:width="110">
+        <inputExpression id="InputExpression_Wiedza" typeRef="string">
+          <text>Wiedza</text>
+        </inputExpression>
+        <inputValues id="InputValues_Wiedza">
+          <text>"zwykła","poufna"</text>
+        </inputValues>
+      </input>
+      <output id="Output_Sciezka" label="Ścieżka postępowania" typeRef="string" biodi:width="230">
+        <outputValues id="OutputValues_Sciezka">
+          <text>"Standardowa","Podwyższonego ryzyka","Wysokiego ryzyka","Odchodzący nie bierze udziału"</text>
+        </outputValues>
+      </output>
+      <rule id="Rule_01">
+        <description>Śmierć, nieobecność albo brak kooperacji: odchodzący nie bierze udziału w procedurze; pozostałe dane wejściowe nie mają znaczenia.</description>
+        <inputEntry id="InputEntry_01_1">
+          <text>"śmierć","nagła nieobecność","nieobecność z nieznanej przyczyny", "brak kooperacji"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_01_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_01_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_01_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_01_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_01">
+          <text>"Odchodzący nie bierze udziału"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_02">
+        <description>Rozwiązanie umowy ze skutkiem natychmiastowym (5.18, czynnik a).</description>
+        <inputEntry id="InputEntry_02_1">
+          <text>"rozwiązanie bez wypowiedzenia"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_02_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_02_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_02_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_02_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_02">
+          <text>"Wysokiego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_03">
+        <description>Spór albo potwierdzone naruszenie (5.18, czynnik a; 6.4).</description>
+        <inputEntry id="InputEntry_03_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_03_2">
+          <text>"spór z firmą","potwierdzone naruszenie zasad bezpieczeństwa informacji"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_03_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_03_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_03_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_03">
+          <text>"Wysokiego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_04">
+        <description>Przejście do konkurencji z wiedzą poufną (5.18, czynnik a; 6.5).</description>
+        <inputEntry id="InputEntry_04_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_04_2">
+          <text>"przejście do konkurencji"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_04_3">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_04_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_04_5">
+          <text>"poufna"</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_04">
+          <text>"Wysokiego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_05">
+        <description>Dostęp uprzywilejowany bez szczególnych okoliczności (5.18, czynnik c).</description>
+        <inputEntry id="InputEntry_05_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_05_2">
+          <text>"brak szczególnych okoliczności"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_05_3">
+          <text>"uprzywilejowany"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_05_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_05_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_05">
+          <text>"Podwyższonego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_06">
+        <description>Przejście do konkurencji z dostępem poufnym albo uprzywilejowanym (5.18, czynniki a i c).</description>
+        <inputEntry id="InputEntry_06_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_06_2">
+          <text>"przejście do konkurencji"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_06_3">
+          <text>"poufny","uprzywilejowany"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_06_4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_06_5">
+          <text>"zwykła"</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_06">
+          <text>"Podwyższonego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_07">
+        <description>Stanowisko zarządcze bez szczególnych okoliczności (5.18, czynnik b).</description>
+        <inputEntry id="InputEntry_07_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_07_2">
+          <text>"brak szczególnych okoliczności"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_07_3">
+          <text>"podstawowy","poufny"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_07_4">
+          <text>"zarządcze"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_07_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_07">
+          <text>"Podwyższonego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_08">
+        <description>Stanowisko zarządcze przy przejściu do konkurencji (5.18, czynnik b).</description>
+        <inputEntry id="InputEntry_08_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_08_2">
+          <text>"przejście do konkurencji"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_08_3">
+          <text>"podstawowy"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_08_4">
+          <text>"zarządcze"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_08_5">
+          <text>"zwykła"</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_08">
+          <text>"Podwyższonego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_09">
+        <description>Firma wypowiada umowę osobie z dostępem poufnym (5.18, czynniki a i c).</description>
+        <inputEntry id="InputEntry_09_1">
+          <text>"wypowiedzenie przez firmę"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_09_2">
+          <text>"brak szczególnych okoliczności"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_09_3">
+          <text>"poufny"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_09_4">
+          <text>"wykonawcze","kierownicze"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_09_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_09">
+          <text>"Podwyższonego ryzyka"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_10">
+        <description>Dostęp poufny bez szczególnych okoliczności; firma nie wypowiada umowy.</description>
+        <inputEntry id="InputEntry_10_1">
+          <text>"wypowiedzenie przez odchodzącego","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_10_2">
+          <text>"brak szczególnych okoliczności"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_10_3">
+          <text>"poufny"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_10_4">
+          <text>"wykonawcze","kierownicze"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_10_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_10">
+          <text>"Standardowa"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_11">
+        <description>Dostęp podstawowy bez szczególnych okoliczności; samo wypowiedzenie przez firmę nie zmienia ścieżki.</description>
+        <inputEntry id="InputEntry_11_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_11_2">
+          <text>"brak szczególnych okoliczności"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_11_3">
+          <text>"podstawowy"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_11_4">
+          <text>"wykonawcze","kierownicze"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_11_5">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_11">
+          <text>"Standardowa"</text>
+        </outputEntry>
+      </rule>
+      <rule id="Rule_12">
+        <description>Dostęp podstawowy i wiedza zwykła; samo przejście do konkurencji nie zmienia ścieżki.</description>
+        <inputEntry id="InputEntry_12_1">
+          <text>"wypowiedzenie przez odchodzącego","wypowiedzenie przez firmę","porozumienie stron","upływ okresu umowy","decyzja firmy zewnętrznej"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_12_2">
+          <text>"przejście do konkurencji"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_12_3">
+          <text>"podstawowy"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_12_4">
+          <text>"wykonawcze","kierownicze"</text>
+        </inputEntry>
+        <inputEntry id="InputEntry_12_5">
+          <text>"zwykła"</text>
+        </inputEntry>
+        <outputEntry id="OutputEntry_12">
+          <text>"Standardowa"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_SposobOdejscia" name="Sposób odejścia">
+    <description>Sposób odejścia: jak współpraca się kończy albo co ją nagle przerywa. Gdy pasuje kilka wartości, śmierć, obie nieobecności i brak kooperacji mają pierwszeństwo przed pozostałymi.
+– wypowiedzenie przez odchodzącego: odchodzący wypowiada umowę, niezależnie od jej rodzaju;
+– wypowiedzenie przez firmę: firma wypowiada umowę z zachowaniem okresu wypowiedzenia albo prosi firmę zewnętrzną o odwołanie skierowanej przez nią osoby;
+– porozumienie stron: strony uzgadniają rozwiązanie umowy;
+– upływ okresu umowy: umowa kończy się w ustalonym terminie;
+– decyzja firmy zewnętrznej: firma zewnętrzna z własnej inicjatywy odwołuje osobę skierowaną do pracy na rzecz firmy;
+– rozwiązanie bez wypowiedzenia: jedna ze stron rozwiązuje umowę ze skutkiem natychmiastowym;
+– śmierć;
+– nagła nieobecność: znana przyczyna uniemożliwia odchodzącemu udział w procedurze, np. śpiączka;
+– nieobecność z nieznanej przyczyny: odchodzący przestał pracować i nie odpowiada na próby kontaktu;
+– brak kooperacji: odchodzący jest osiągalny, ale odmawia udziału w procedurze.</description>
+    <variable id="InformationItem_SposobOdejscia" name="Sposób odejścia" typeRef="string" />
+  </inputData>
+  <inputData id="InputData_Kontekst" name="Kontekst">
+    <description>Kontekst: okoliczności znane w chwili ustalania ścieżki. Decydują fakty, nie podejrzenia. Decyduje najpoważniejsza okoliczność, w kolejności: potwierdzone naruszenie zasad bezpieczeństwa informacji, spór z firmą, przejście do konkurencji.
+– brak szczególnych okoliczności;
+– przejście do konkurencji: odchodzący sam to zgłosił lub wiadomo o tym z wiarygodnego źródła;
+– spór z firmą: trwa formalny spór, np. odchodzący zgłosił roszczenie na piśmie lub wniósł sprawę do sądu;
+– zweryfikowane naruszenie zasad bezpieczeństwa informacji (ISO/IEC 27002:2022, pkt 6.4).</description>
+    <variable id="InformationItem_Kontekst" name="Kontekst" typeRef="string" />
+  </inputData>
+  <inputData id="InputData_StopienDostepu" name="Stopień dostępu">
+    <description>Stopień dostępu: najcenniejsze zasoby, do których odchodzący ma dostęp (ISO/IEC 27002:2022, pkt 5.18, czynnik c). Decydujący jest najwyższy stopień spośród wszystkich posiadanych dostępów.
+– podstawowy: tylko konto służbowe i narzędzia dostępne dla całego personelu;
+– poufny: dane klientów w systemie MRP, CRM, kod źródłowy, dane kadrowe lub finansowe;
+– uprzywilejowany: uprawnienia administracyjne, środowisko produkcyjne, sekrety (hasła i klucze systemowe), konsole administracyjne chmury, bankowość elektroniczna firmy lub zatwierdzanie płatności.</description>
+    <variable id="InformationItem_StopienDostepu" name="Stopień dostępu" typeRef="string" />
+  </inputData>
+  <inputData id="InputData_StopienStanowiska" name="Stopień stanowiska">
+    <description>Stopień stanowiska: obowiązki odchodzącego (ISO/IEC 27002:2022, pkt 5.18, czynnik b). Gdy pasuje kilka wartości, wpisuje się najwyższą.
+– wykonawcze: nie kieruje pracą innych;
+– kierownicze: kieruje zespołem lub działem;
+– zarządcze: członek zarządu, prokurent lub inna osoba z ogólnym pełnomocnictwem do działania w imieniu firmy.</description>
+    <variable id="InformationItem_StopienStanowiska" name="Stopień stanowiska" typeRef="string" />
+  </inputData>
+  <inputData id="InputData_Wiedza" name="Wiedza">
+    <description>Wiedza: to, czego nie da się odebrać jak dostępu. Według ISO/IEC 27002:2022, pkt 6.5, obowiązki trwające po odejściu mogą dotyczyć m.in. poufności informacji i zdobytej wiedzy.
+– zwykła: odchodzący nie zna spraw poufnych poza danymi, do których ma dostęp;
+– poufna: odchodzący zna sprawy poufne także poza danymi, do których ma dostęp, np. plany rozwoju produktu, ceny i warunki umów z klientami, zabezpieczenia systemów.</description>
+    <variable id="InformationItem_Wiedza" name="Wiedza" typeRef="string" />
+  </inputData>
+  <knowledgeSource id="KnowledgeSource_Iso27002" name="ISO/IEC 27002:2022">
+    <description>Podstawa reguł: pkt 5.18 (czynniki ryzyka a–c, rozważane przed zakończeniem współpracy), pkt 6.4 (postępowanie dyscyplinarne dopiero po sprawdzeniu, że doszło do naruszenia) i pkt 6.5 (obowiązki, które trwają po zakończeniu współpracy).</description>
+    <type>Norma</type>
+  </knowledgeSource>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_UstalenieSciezki">
+      <dmndi:DMNShape id="DMNShape_UstalenieSciezki" dmnElementRef="UstalenieSciezki">
+        <dc:Bounds height="80" width="180" x="460" y="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_InputData_SposobOdejscia" dmnElementRef="InputData_SposobOdejscia">
+        <dc:Bounds height="45" width="125" x="168" y="300" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_SposobOdejscia" dmnElementRef="InformationRequirement_SposobOdejscia">
+        <di:waypoint x="230" y="300" />
+        <di:waypoint x="490" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_InputData_Kontekst" dmnElementRef="InputData_Kontekst">
+        <dc:Bounds height="45" width="125" x="328" y="300" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_Kontekst" dmnElementRef="InformationRequirement_Kontekst">
+        <di:waypoint x="390" y="300" />
+        <di:waypoint x="520" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_InputData_StopienDostepu" dmnElementRef="InputData_StopienDostepu">
+        <dc:Bounds height="45" width="125" x="488" y="300" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_StopienDostepu" dmnElementRef="InformationRequirement_StopienDostepu">
+        <di:waypoint x="550" y="300" />
+        <di:waypoint x="550" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_InputData_StopienStanowiska" dmnElementRef="InputData_StopienStanowiska">
+        <dc:Bounds height="45" width="125" x="648" y="300" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_StopienStanowiska" dmnElementRef="InformationRequirement_StopienStanowiska">
+        <di:waypoint x="710" y="300" />
+        <di:waypoint x="580" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_InputData_Wiedza" dmnElementRef="InputData_Wiedza">
+        <dc:Bounds height="45" width="125" x="808" y="300" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_Wiedza" dmnElementRef="InformationRequirement_Wiedza">
+        <di:waypoint x="870" y="300" />
+        <di:waypoint x="610" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_KnowledgeSource_Iso27002" dmnElementRef="KnowledgeSource_Iso27002">
+        <dc:Bounds height="63" width="100" x="760" y="88" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_AuthorityRequirement_Iso27002" dmnElementRef="AuthorityRequirement_Iso27002">
+        <di:waypoint x="760" y="120" />
+        <di:waypoint x="640" y="120" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

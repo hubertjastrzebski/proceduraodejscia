@@ -21,8 +21,3 @@ Procedura określa postępowanie od odnotowania odejścia na liście personelu d
 - `ustalenie_sciezki_v0.1.3.dmn` – tablica decyzyjna DMN ustalająca ścieżkę postępowania
 
 Pliki .bpmn i .dmn można otworzyć w Camunda Modeler lub w przeglądarce: [demo.bpmn.io](https://demo.bpmn.io), [demo.bpmn.io/dmn](https://demo.bpmn.io/dmn).
-
-## Stan prac
-
-- Model BPMN i tablica DMN – ukończone
-- Dokumentacja procedury – w przygotowaniu
